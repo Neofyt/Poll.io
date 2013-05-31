@@ -1,6 +1,6 @@
-// ==========
+// ============
 // VARIABLES
-// ==========
+// ============
 
 var w = window,
 	prev, 
@@ -10,14 +10,14 @@ var w = window,
 	reponses,
 	suites,
 	tpl,
-	answers = {};
+	Poll = {};
 
 
-// ==========
+// ============
 // HELPERS
-// ==========
+// ============
 
-function k(c, f, p) {
+function k(c, f, p){
 	if (w.c === c) {
 		p ? f(p) : f();
 	}
@@ -28,11 +28,38 @@ function upperCase(str){
 }
 
 
-// ==========
-// FUNCTIONS
-// ==========
+// ============
+// POLL OBJECT
+// ============
 
-function setI(i) {
+function isFirstRun(){
+	localStorage.getItem("Poll") ? load() : save();
+}
+
+function load(){
+	Poll = JSON.parse(localStorage.getItem("Poll"));
+}
+
+function save(){
+	localStorage.setItem("Poll", JSON.stringify(Poll));
+	load();
+}
+
+function set(num, val){
+	Poll[num] = val;
+	save();
+}
+
+function get(num){
+	return Poll[num];
+}
+
+
+// ============
+// INTERFACE
+// ============
+
+function setI(i){
 	prev = w.i;
 	w.i = (w.i + i === 0) ? 1 : w.i + i;
 
@@ -43,7 +70,7 @@ function setI(i) {
 	}
 }
 
-function display(i) {
+function display(i){
 	question = questionnaire[i];
 	$("#question").text(question.q);
 	$(".buttons").empty().html(parseQ(question.a, i));
@@ -56,29 +83,30 @@ function parseQ(q, n){
 	tpl = "";
 
 	for (var i = 0, length = reponses.length; i < length; i++) {
-		tpl += '<button class="' + reponses[i] +'" data-go="' + suites[i] +'" onclick="treat(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
+		tpl += '<button class="' + reponses[i] +'" data-go="' + suites[i] +'" onclick="proceed(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
 	}
 
 	return tpl;
 }
 
-function treat(q, n){
+function proceed(q, n){
 	$q = $(q);
-	answers[n] = $q.text();
-
-		console.log(answers);
-
-	w.i = $(q).data("go");
-	display(w.i);
+	set(n, $q.text());
+	display($q.data("go"));
 }
 
 
+// ============
+// RUN ALL THIS
+// ============
 
-$(document).ready(function () {
+$(document).ready(function(){
+	isFirstRun();
+
 	w.i = 0;
 	setI(1);
 
-	$(this).keydown(function (e) {
+	$(this).keydown(function(e){
 		w.c = e.keyCode;
 		k(37, setI, -1); // 37 = left
 		k(39, setI, 1); // 39 = right
