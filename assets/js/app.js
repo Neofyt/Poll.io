@@ -5,12 +5,13 @@
 var w = window,
 	prev, 
 	next,
-	nombre = lgth(questionnaire),
+	nombre,
 	question,
 	reponses,
 	suites,
 	tpl,
-	Poll = {};
+	Poll = {},
+	hash = window.location.hash.replace("#","");
 
 
 // ============
@@ -63,13 +64,27 @@ function get(num){
 // INTERFACE
 // ============
 
+function getQuestionnaire(id){
+	$.get("https://api.github.com/gists/" + id, function(data) {
+		questionnaire = JSON.parse(data.files.questionnaire.content).questions;
+	}).complete(function () {
+		nombre = lgth(questionnaire);
+		w.i = 0;
+		setI(0);
+	});
+	
+}
+
 function setI(i){
 	prev = w.i;
-	w.i = (w.i + i === 0) ? 1 : w.i + i;
+	w.i = (w.i + i === 0) ? 0 : w.i + i;
 
-	if (w.i > nombre) w.i = nombre;
+	if (w.i > nombre - 1) w.i = nombre - 1;
 	next = w.i;
-	if (next !== prev) {
+	if(w.i === 0){
+		display(0);
+	}
+	else if (next !== prev) {
 		display(w.i);
 	}
 }
@@ -98,7 +113,7 @@ function parseQ(q, n){
 
 function proceed(q, n){
 	$q = $(q);
-	set(n, $q.text());
+	set(n+1, $q.text());
 	setProgress();
 	display($q.data("go"));
 }
@@ -107,6 +122,18 @@ function setProgress(){
 	$("#progress").text(lgth(Poll)+1 + "/" + lgth(questionnaire));
 }
 
+function setMessage(cls, msg){
+	$("#question").addClass(cls).text(msg); 
+}
+
+var triggerInfo = {
+	hash: function() { setMessage("red", "Oups !! Something went wrong :/"); },
+	ui: function() { setMessage("", ""); }
+}
+
+function info(msg){
+	triggerInfo[msg]();
+}
 
 // ===================
 // RUN YOU CLEVER BOY
@@ -115,8 +142,7 @@ function setProgress(){
 $(document).ready(function(){
 	isFirstRun();
 
-	w.i = 0;
-	setI(1);
+	(hash !== "") ? getQuestionnaire(hash) : info("hash");
 
 	$(this).keydown(function(e){
 		w.c = e.keyCode;

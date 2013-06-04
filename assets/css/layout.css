@@ -157,7 +157,7 @@ section {
 
 			.oui:hover { background: #349534 }
 
-		.non {
+		.non, .red {
 			color: red
 		}
 
