@@ -5,7 +5,7 @@
 var w = window,
 	prev, 
 	next,
-	nombre = Object.keys(questionnaire).length,
+	nombre = lgth(questionnaire),
 	question,
 	reponses,
 	suites,
@@ -25,6 +25,10 @@ function k(c, f, p){
 
 function upperCase(str){
 	return str.charAt(0).toUpperCase() + str.substring(1);
+}
+
+function lgth(object){
+	return Object.keys(object).length;
 }
 
 
@@ -71,9 +75,11 @@ function setI(i){
 }
 
 function display(i){
-	question = questionnaire[i];
-	$("#question").text(question.q);
-	$(".buttons").empty().html(parseQ(question.a, i));
+	if(questionnaire[i]){
+		question = questionnaire[i];
+		$("#question").text(question.q);
+		$(".buttons").empty().html(parseQ(question.a, i));	
+	}
 }
 
 function parseQ(q, n){
@@ -92,13 +98,18 @@ function parseQ(q, n){
 function proceed(q, n){
 	$q = $(q);
 	set(n, $q.text());
+	setProgress();
 	display($q.data("go"));
 }
 
+function setProgress(){
+	$("#progress").text(lgth(Poll)+1 + "/" + lgth(questionnaire));
+}
 
-// ============
-// RUN ALL THIS
-// ============
+
+// ===================
+// RUN YOU CLEVER BOY
+// ===================
 
 $(document).ready(function(){
 	isFirstRun();

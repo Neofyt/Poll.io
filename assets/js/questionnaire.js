@@ -4,19 +4,19 @@ var questionnaire = {
 		a: "oui:2|non:3"
 	},
 	2: {
-		q: "Question 2 ?",
-		a: "apple|strawberry|lemon"
+		q: "Question 2 é à ?",
+		a: "oui:3|non:4"
 	},
 	3: {
 		q: "Question 3 ?",
-		a: "oui:3|non:4"
+		a: "oui:4|non:5"
 	},
 	4: {
 		q: "Question 4 ?",
-		a: "oui:5|non:5"
+		a: "oui:5|non:6"
 	},
 	5: {
 		q: "Question 5 ?",
-		a: "oui:6|non:6"
+		a: "oui:7|non:7"
 	}
 };
