@@ -79,6 +79,7 @@ function display(i){
 		question = questionnaire[i];
 		$("#question").text(question.q);
 		$(".buttons").empty().html(parseQ(question.a, i));	
+		w.i = i;
 	}
 }
 
