@@ -7,6 +7,7 @@ var w = window,
 	next,
 	nombre,
 	question,
+	questionnaire,
 	reponses,
 	suites,
 	tpl,
@@ -71,6 +72,8 @@ function getQuestionnaire(id){
 		nombre = lgth(questionnaire);
 		w.i = 0;
 		setI(0);
+	}).fail(function(){
+		info("nf");
 	});
 }
 
@@ -80,10 +83,10 @@ function setI(i){
 
 	if (w.i > nombre - 1) w.i = nombre - 1;
 	next = w.i;
+
 	if(w.i === 0){
 		display(0);
-	}
-	else if (next !== prev) {
+	} else if (next !== prev) {
 		display(w.i);
 	}
 }
@@ -127,7 +130,7 @@ function setMessage(cls, msg){
 
 var triggerInfo = {
 	hash: function() { setMessage("red", "Oups !! Something went wrong &#9785;"); },
-	ui: function() { setMessage("", ""); }
+	nf: function() { setMessage("red", "Questionnaire was not found. Please check the URL."); }
 }
 
 function info(msg){
