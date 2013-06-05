@@ -67,12 +67,11 @@ function get(num){
 function getQuestionnaire(id){
 	$.get("https://api.github.com/gists/" + id, function(data) {
 		questionnaire = JSON.parse(data.files.questionnaire.content).questions;
-	}).complete(function () {
+	}).complete(function() {
 		nombre = lgth(questionnaire);
 		w.i = 0;
 		setI(0);
 	});
-	
 }
 
 function setI(i){
@@ -92,7 +91,7 @@ function setI(i){
 function display(i){
 	if(questionnaire[i]){
 		question = questionnaire[i];
-		$("#question").text(question.q);
+		$("#holder").text(question.q);
 		$(".buttons").empty().html(parseQ(question.a, i));	
 		w.i = i;
 	}
@@ -114,20 +113,20 @@ function parseQ(q, n){
 function proceed(q, n){
 	$q = $(q);
 	set(n+1, $q.text());
-	setProgress();
+	setProgress(n+1);
 	display($q.data("go"));
 }
 
-function setProgress(){
-	$("#progress").text(lgth(Poll)+1 + "/" + lgth(questionnaire));
+function setProgress(n){
+	$("#progress").text(n + "/" + lgth(questionnaire));
 }
 
 function setMessage(cls, msg){
-	$("#question").addClass(cls).text(msg); 
+	$("#holder").addClass(cls).html(msg); 
 }
 
 var triggerInfo = {
-	hash: function() { setMessage("red", "Oups !! Something went wrong :/"); },
+	hash: function() { setMessage("red", "Oups !! Something went wrong &#9785;"); },
 	ui: function() { setMessage("", ""); }
 }
 
