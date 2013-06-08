@@ -185,3 +185,16 @@ canvas {
 	/*margin: 0 0 70px 484px;*/
 	display: none;
 }
+
+#progress {
+	width: 100px;
+	height: 10px;
+	background: #eee;
+	float: right;
+}
+
+#indicator {
+	height: 100%;
+	width: 0;
+	background: #ccc;
+}

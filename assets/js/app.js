@@ -12,7 +12,7 @@ var w = window,
 	suites,
 	tpl,
 	Poll = {},
-	hash = window.location.hash.replace("#","");
+	hash = w.location.hash.replace("#","");
 
 
 // ============
@@ -66,9 +66,9 @@ function get(num){
 // ============
 
 function getQuestionnaire(id){
-	$.get("https://api.github.com/gists/" + id, function(data) {
+	$.get("https://api.github.com/gists/" + id, function(data){
 		questionnaire = JSON.parse(data.files.questionnaire.content).questions;
-	}).complete(function() {
+	}).complete(function(){
 		nombre = lgth(questionnaire);
 		w.i = 0;
 		setI(0);
@@ -97,6 +97,7 @@ function display(i){
 		$("#holder").text(question.q);
 		$(".buttons").empty().html(parseQ(question.a, i));	
 		w.i = i;
+		setProgress(i+1);
 	}
 }
 
@@ -116,12 +117,16 @@ function parseQ(q, n){
 function proceed(q, n){
 	$q = $(q);
 	set(n+1, $q.text());
-	setProgress(n+1);
-	display($q.data("go"));
+	display($q.data("go")-1);
 }
 
+
+// ================
+// FEEDBACK TO USER
+// ================
+
 function setProgress(n){
-	$("#progress").text(n + "/" + lgth(questionnaire));
+	$("#indicator").css("width", (n*100) / nombre + "px");
 }
 
 function setMessage(cls, msg){
@@ -136,6 +141,7 @@ var triggerInfo = {
 function info(msg){
 	triggerInfo[msg]();
 }
+
 
 // ===================
 // RUN YOU CLEVER BOY
