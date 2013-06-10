@@ -90,9 +90,10 @@ function getQuestionnaire(id){
 
 function setI(i){
 	prev = w.i;
-	w.i = (w.i + i === 0) ? 0 : w.i + i;
 
-	if (w.i > nombre - 1) w.i = nombre - 1;
+	w.i = (w.i + i <= 0) ? 0 : w.i + i; // beginning of object
+	w.i = (w.i > nombre - 1) ? nombre - 1 : w.i; // end of object
+	
 	next = w.i;
 
 	if(w.i === 0){
@@ -100,7 +101,6 @@ function setI(i){
 	} else if (next !== prev) {
 		display(w.i);
 	}
-	console.log(prev, w.i, next);
 }
 
 function display(i){
