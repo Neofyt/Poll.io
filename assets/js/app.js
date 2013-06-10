@@ -95,7 +95,7 @@ function setI(i){
 	if (w.i > nombre - 1) w.i = nombre - 1;
 	next = w.i;
 
-	if(w.i === 0 && prev === 1){
+	if(w.i === 0){
 		display(0);
 	} else if (next !== prev) {
 		display(w.i);
