@@ -10,9 +10,15 @@ var w = window,
 	questionnaire,
 	reponses,
 	suites,
+	goTo,
 	tpl,
 	Poll = {},
-	hash = w.location.hash.replace("#","");
+	hash = w.location.hash.replace("#",""),
+	entityMap = {
+		"[e1]": "&eacute;",
+		"[e2]": "&egrave;",
+		"[i]": "ï"
+	};
 
 
 // ============
@@ -25,14 +31,19 @@ function k(c, f, p){
 	}
 }
 
-function upperCase(str){
-	return str.charAt(0).toUpperCase() + str.substring(1);
-}
-
 function lgth(object){
 	return Object.keys(object).length;
 }
 
+function upperCase(str){
+	return str.charAt(0).toUpperCase() + str.substring(1);
+}
+
+function convertChar(string){
+	return String(string).replace(/\[(e1|e2|i)\]/g, function(s){
+		return entityMap[s];
+	});
+}
 
 // ============
 // POLL OBJECT
@@ -84,17 +95,18 @@ function setI(i){
 	if (w.i > nombre - 1) w.i = nombre - 1;
 	next = w.i;
 
-	if(w.i === 0){
+	if(w.i === 0 && prev === 1){
 		display(0);
 	} else if (next !== prev) {
 		display(w.i);
 	}
+	console.log(prev, w.i, next);
 }
 
 function display(i){
 	if(questionnaire[i]){
 		question = questionnaire[i];
-		$("#holder").text(question.q);
+		$("#holder").html(convertChar(question.q));
 		$(".buttons").empty().html(parseQ(question.a, i));	
 		w.i = i;
 		setProgress(i+1);
@@ -103,12 +115,13 @@ function display(i){
 
 function parseQ(q, n){
 	reponses = q.match(/[a-z]+/g);
-	suites = q.match(/\d/g) || next;
+	suites = q.match(/\d/g) || n+2; 
 
 	tpl = "";
 
 	for (var i = 0, length = reponses.length; i < length; i++) {
-		tpl += '<button class="' + reponses[i] +'" data-go="' + suites[i] +'" onclick="proceed(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
+		goTo = suites[i] || suites;
+		tpl += '<button class="' + reponses[i] +'" data-go="' + goTo +'" onclick="proceed(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
 	}
 
 	return tpl;

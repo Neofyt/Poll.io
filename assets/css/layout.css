@@ -106,7 +106,7 @@ section {
 	border-radius: 3px;
 	-moz-box-shadow: 0 2px 4px -2px #aaa;
 	box-shadow: 0 2px 4px -2px #aaa;
-	margin-bottom: 50px;
+	margin-bottom: 100px;
 }
 
 	section.begin {
@@ -182,7 +182,6 @@ section {
 }
 
 canvas {
-	/*margin: 0 0 70px 484px;*/
 	display: none;
 }
 
