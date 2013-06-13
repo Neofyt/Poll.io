@@ -21,7 +21,9 @@ var w = window,
 		"[i]": "ï"
 	},
 	templates = {
-		range : "<input type='radio' name='r{1}' id='r{0}' value='{0}' /><label for='r{0}' class='r{2}' onclick='proceed(this,{1})' data-go='{3}'>{0}</label>"
+		button : "<button class='{0}' data-go='{1}' onclick='proceed(this,{2})'>{3}</button>",
+		range : "<input type='radio' name='r{0}' id='r{1}' value='{1}' /><label for='r{1}' class='r{2}' onclick='proceed(this,{0})' data-go='{3}'>{1}</label>"
+		
 	};
 
 
@@ -136,7 +138,7 @@ function parseQ(a, n){
 		goTo = n + 2;
 
 		for (var i = 0; i < max; i++){
-   			tpl += templates.range.format(i, n, max, goTo);
+			tpl += templates.range.format(n, i, max, goTo);
 		}
 
 	// Basic question
@@ -146,7 +148,7 @@ function parseQ(a, n){
 
 		for (var i = 0, length = reponses.length; i < length; i++) {
 			goTo = suites[i] || suites;
-			tpl += '<button class="' + reponses[i] +'" data-go="' + goTo +'" onclick="proceed(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
+			tpl += templates.button.format(reponses[i], goTo, n, upperCase(reponses[i]));
 		}
 	}
 	return tpl;
