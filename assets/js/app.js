@@ -18,6 +18,9 @@ var w = window,
 		"[e1]": "&eacute;",
 		"[e2]": "&egrave;",
 		"[i]": "ï"
+	},
+	templates = {
+		range : "<input type='radio' name='r{1}' id='r{0}' value='{0}' /><label for='r{0}' class='r{2}' onclick='proceed(this,{1})' data-go='{3}'>{0}</label>"
 	};
 
 
@@ -44,6 +47,16 @@ function convertChar(string){
 		return entityMap[s];
 	});
 }
+
+String.prototype.format = String.prototype.format || function () {
+	var string = this;
+
+	for (var i = 0, j = arguments.length; i < j; i++) {
+		string = string.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+	}
+
+	return string;
+};
 
 // ============
 // POLL OBJECT
@@ -107,23 +120,33 @@ function display(i){
 	if(questionnaire[i]){
 		question = questionnaire[i];
 		$("#holder").html(convertChar(question.q));
-		$(".buttons").empty().html(parseQ(question.a, i));	
+		$(".buttons").html(parseQ(question.a, i));	
 		w.i = i;
 		setProgress(i+1);
 	}
 }
 
-function parseQ(q, n){
-	reponses = q.match(/[a-z]+/g);
-	suites = q.match(/\d/g) || n+2; 
-
+function parseQ(a, n){
 	tpl = "";
 
-	for (var i = 0, length = reponses.length; i < length; i++) {
-		goTo = suites[i] || suites;
-		tpl += '<button class="' + reponses[i] +'" data-go="' + goTo +'" onclick="proceed(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
-	}
+	// Range
+	if(a.match(/range/g)){
+		var max = a.match(/\d/g) || 5,
+			goTo = n + 2;
+		for (var i = 0; i < max; i++){
+   			tpl += templates.range.format(i, n, max, goTo);
+		}
 
+	// Basic question
+	} else {
+		reponses = a.match(/[a-z]+/g);
+		suites = a.match(/\d/g) || n+2; 
+
+		for (var i = 0, length = reponses.length; i < length; i++) {
+			goTo = suites[i] || suites;
+			tpl += '<button class="' + reponses[i] +'" data-go="' + goTo +'" onclick="proceed(this,' + n +')">' + upperCase(reponses[i]) +'</button>';
+		}
+	}
 	return tpl;
 }
 
