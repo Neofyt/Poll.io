@@ -11,6 +11,7 @@ var w = window,
 	reponses,
 	suites,
 	goTo,
+	max,
 	tpl,
 	Poll = {},
 	hash = w.location.hash.replace("#",""),
@@ -131,8 +132,9 @@ function parseQ(a, n){
 
 	// Range
 	if(a.match(/range/g)){
-		var max = a.match(/\d/g) || 5,
-			goTo = n + 2;
+		max = a.match(/\d/g) || 5;
+		goTo = n + 2;
+
 		for (var i = 0; i < max; i++){
    			tpl += templates.range.format(i, n, max, goTo);
 		}
