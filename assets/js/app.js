@@ -3,6 +3,7 @@
 // ============
 
 var w = window,
+	tpl,
 	prev, 
 	next,
 	nombre,
@@ -12,18 +13,16 @@ var w = window,
 	suites,
 	goTo,
 	max,
-	tpl,
 	Poll = {},
 	hash = w.location.hash.replace("#",""),
 	entityMap = {
 		"[e1]": "&eacute;",
 		"[e2]": "&egrave;",
-		"[i]": "ï"
+		"[i1]": "&iuml;"
 	},
 	templates = {
 		button : "<button class='{0}' data-go='{1}' onclick='proceed(this,{2})'>{3}</button>",
 		range : "<input type='radio' name='r{0}' id='r{1}' value='{1}' /><label for='r{1}' class='r{2}' onclick='proceed(this,{0})' data-go='{3}'>{1}</label>"
-		
 	};
 
 
@@ -46,12 +45,12 @@ function upperCase(str){
 }
 
 function convertChar(string){
-	return String(string).replace(/\[(e1|e2|i)\]/g, function(s){
+	return String(string).replace(/\[(e1|e2|i1)\]/g, function(s){
 		return entityMap[s];
 	});
 }
 
-String.prototype.format = String.prototype.format || function () {
+String.prototype.format = function(){
 	var string = this;
 
 	for (var i = 0, j = arguments.length; i < j; i++) {
@@ -60,6 +59,7 @@ String.prototype.format = String.prototype.format || function () {
 
 	return string;
 };
+
 
 // ============
 // POLL OBJECT

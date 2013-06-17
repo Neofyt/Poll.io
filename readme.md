@@ -1,4 +1,4 @@
 # Poll.io
 
 
-A smart and visual tool for creating polls
+Easily create smart and interactive polls...
