@@ -13,8 +13,8 @@ var w = window,
 	suites,
 	goTo,
 	max,
+	hash,
 	Poll = {},
-	hash = w.location.hash.replace("#",""),
 	entityMap = {
 		"[e1]": "&eacute;",
 		"[e2]": "&egrave;",
@@ -91,6 +91,11 @@ function get(num){
 // ============
 // INTERFACE
 // ============
+
+function run(){
+	hash = w.location.hash.replace("#",""),
+	hash !== "" ? getQuestionnaire(hash) : info("hash");
+}
 
 function getQuestionnaire(id){
 	$.get("https://api.github.com/gists/" + id, function(data){
@@ -190,7 +195,7 @@ function info(msg){
 $(document).ready(function(){
 	isFirstRun();
 
-	(hash !== "") ? getQuestionnaire(hash) : info("hash");
+	run();
 
 	$(this).keydown(function(e){
 		w.c = e.keyCode;
@@ -198,3 +203,7 @@ $(document).ready(function(){
 		k(39, setI, 1); // 39 = right
 	});
 });
+
+w.onhashchange = function() {
+	run();
+};
