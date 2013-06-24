@@ -149,7 +149,7 @@ function parseQ(a, n){
 	// Basic question
 	} else {
 		reponses = a.match(/[a-z]+/g);
-		suites = a.match(/\d/g) || n+2; 
+		suites = a.match(/\d/g) || n + 2; 
 
 		for (var i = 0, length = reponses.length; i < length; i++) {
 			goTo = suites[i] || suites;
