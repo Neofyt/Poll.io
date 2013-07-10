@@ -3,6 +3,7 @@
 // ============
 
 var w = window,
+	d = document,
 	tpl,
 	prev, 
 	next,
@@ -30,6 +31,8 @@ var w = window,
 // HELPERS
 // ============
 
+function $(expr) { return d.querySelector(expr); }
+
 function k(c, f, p){
 	if (w.c === c) {
 		p ? f(p) : f();
@@ -40,9 +43,9 @@ function lgth(object){
 	return Object.keys(object).length;
 }
 
-function upperCase(str){
-	return str.charAt(0).toUpperCase() + str.substring(1);
-}
+String.prototype.upperCase = function(){
+	return this.charAt(0).toUpperCase() + this.substring(1);
+};
 
 function convertChar(string){
 	return String(string).replace(/\[(e1|e2|i1)\]/g, function(s){
@@ -59,6 +62,32 @@ String.prototype.format = function(){
 
 	return string;
 };
+
+
+// =================
+// CSS MANIPULATIONS
+// =================
+
+Element.prototype.hasClass = function (className) {
+    return new RegExp(' ' + className + ' ').test(' ' + this.className + ' ');
+};
+
+Element.prototype.addClass = function (className) {
+    if (!this.hasClass(className)) {
+        this.className += ' ' + className;
+    }
+};
+
+Element.prototype.removeClass = function (className) {
+    var newClass = ' ' + this.className.replace(/[\t\r\n]/g, ' ') + ' '
+    if (this.hasClass(className)) {
+        while (newClass.indexOf( ' ' + className + ' ') >= 0) {
+            newClass = newClass.replace(' ' + className + ' ', ' ');
+        }
+        this.className = newClass.replace(/^\s+|\s+$/g, ' ');
+    }
+};
+
 
 
 // ============
@@ -98,16 +127,33 @@ function run(){
 }
 
 function getQuestionnaire(id){
-	$.get("https://api.github.com/gists/" + id, function(data){
-		questionnaire = JSON.parse(data.files.questionnaire.content).questions;
-	}).complete(function(){
-		nombre = lgth(questionnaire);
-		w.i = 0;
-		setI(0);
-	}).fail(function(){
-		info("nf");
-	});
-}
+	var xhr = null;
+
+	if (window.XMLHttpRequest){ // Firefox 
+		xhr = new XMLHttpRequest();
+	} else if (window.ActiveXObject){ // Internet Explorer 
+		xhr = new ActiveXObject("Microsoft.XMLHTTP");
+	} else { // XMLHttpRequest non supporté par le navigateur 
+	    alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest...");
+	    return;
+	}
+
+	xhr.open("GET", "https://api.github.com/gists/" + id, false);
+	xhr.send(null);
+
+	if (xhr.readyState == 4){
+		if(xhr.status == 200){
+			var data = JSON.parse(JSON.parse(xhr.responseText).files.questionnaire.content);
+				questionnaire = data.questions,
+				nombre = lgth(questionnaire);
+			w.i = 0;
+			setI(0);
+		} else {
+			info("nf");
+		}
+	}
+};
+
 
 function setI(i){
 	prev = w.i;
@@ -127,8 +173,8 @@ function setI(i){
 function display(i){
 	if(questionnaire[i]){
 		question = questionnaire[i];
-		$("#holder").html(convertChar(question.q));
-		$(".buttons").html(parseQ(question.a, i));	
+		$("#holder").innerHTML = convertChar(question.q);
+		$(".buttons").innerHTML = parseQ(question.a, i);	
 		w.i = i;
 		setProgress(i+1);
 	}
@@ -153,17 +199,17 @@ function parseQ(a, n){
 
 		for (var i = 0, length = reponses.length; i < length; i++) {
 			goTo = suites[i] || suites;
-			tpl += templates.button.format(reponses[i], goTo, n, upperCase(reponses[i]));
+			tpl += templates.button.format(reponses[i], goTo, n, reponses[i].upperCase());
 		}
 	}
 	return tpl;
 }
 
 function proceed(q, n){
-	$q = $(q);
-	set(n+1, $q.text());
-	display($q.data("go")-1);
+	set(n+1, q.text);
+	display(q.getAttribute("data-go")-1);
 }
+
 
 
 // ================
@@ -171,11 +217,11 @@ function proceed(q, n){
 // ================
 
 function setProgress(n){
-	$("#indicator").css("width", (n*100) / nombre + "px");
+	$("#indicator").style.width = (n*100) / nombre + "px";
 }
 
 function setMessage(cls, msg){
-	$("#holder").addClass(cls).html(msg); 
+	$("#holder").addClass(cls).innerHTML = msg; 
 }
 
 var triggerInfo = {
@@ -188,21 +234,20 @@ function info(msg){
 }
 
 
+
 // ===================
 // RUN YOU CLEVER BOY
 // ===================
 
-$(document).ready(function(){
-	isFirstRun();
+isFirstRun();
 
-	run();
+run();
 
-	$(this).keydown(function(e){
-		w.c = e.keyCode;
-		k(37, setI, -1); // 37 = left
-		k(39, setI, 1); // 39 = right
-	});
-});
+d.onkeydown = function(e){
+	w.c = e.keyCode;
+	k(37, setI, -1); // 37 = left
+	k(39, setI, 1); // 39 = right
+};
 
 w.onhashchange = function() {
 	run();
