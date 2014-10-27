@@ -76,6 +76,7 @@ Element.prototype.addClass = function (className) {
     if (!this.hasClass(className)) {
         this.className += ' ' + className;
     }
+    return this;
 };
 
 Element.prototype.removeClass = function (className) {
@@ -86,6 +87,7 @@ Element.prototype.removeClass = function (className) {
         }
         this.className = newClass.replace(/^\s+|\s+$/g, ' ');
     }
+    return this;
 };
 
 
@@ -108,6 +110,7 @@ function save(){
 }
 
 function set(num, val){
+	console.log(num, val);
 	Poll[num] = val;
 	save();
 }
@@ -133,9 +136,9 @@ function getQuestionnaire(id){
 		xhr = new XMLHttpRequest();
 	} else if (window.ActiveXObject){ // Internet Explorer 
 		xhr = new ActiveXObject("Microsoft.XMLHTTP");
-	} else { // XMLHttpRequest non supporté par le navigateur 
-	    alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest...");
-	    return;
+	} else {
+		info("xhr");
+		return;
 	}
 
 	xhr.open("GET", "https://api.github.com/gists/" + id, false);
@@ -173,7 +176,7 @@ function setI(i){
 function display(i){
 	if(questionnaire[i]){
 		question = questionnaire[i];
-		$("#holder").innerHTML = convertChar(question.q);
+		$("#message").innerHTML = convertChar(question.q);
 		$(".buttons").innerHTML = parseQ(question.a, i);	
 		w.i = i;
 		setProgress(i+1);
@@ -206,8 +209,14 @@ function parseQ(a, n){
 }
 
 function proceed(q, n){
-	set(n+1, q.text);
-	display(q.getAttribute("data-go")-1);
+	set(n+1, q.innerText);
+	if(n+1 < nombre){
+		display(q.getAttribute("data-go")-1);
+	} else {
+		$("#indicator").style.background = "green";
+		$(".buttons").style.display = "none";
+		info("end");
+	}
 }
 
 
@@ -221,12 +230,15 @@ function setProgress(n){
 }
 
 function setMessage(cls, msg){
-	$("#holder").addClass(cls).innerHTML = msg; 
+	$("#holder").addClass(cls); 
+	$("#message").innerHTML = msg; 
 }
 
 var triggerInfo = {
-	hash: function() { setMessage("red", "Oups !! Something went wrong &#9785;"); },
-	nf: function() { setMessage("red", "Questionnaire was not found. Please check the URL."); }
+	hash: function() { setMessage("red-h", "Oups !! Something went wrong &#9785;"); },
+	nf: function() { setMessage("red-h", "Questionnaire was not found. Please check the URL."); },
+	xhr: function() { setMessage("red-h", "Your browser is not compatible. Please try with an other one."); },
+	end: function() { setMessage("green-h", "Thank you for taking the time to complete this questionnaire."); }
 }
 
 function info(msg){

@@ -118,7 +118,7 @@ section {
 		text-indent: 0;
 	}
 	
-	#holder {
+	#message {
 		margin: 15px;
 	}
 
@@ -155,13 +155,13 @@ section {
 			color: green;
 		}
 
-			.oui:hover { background: #349534 }
+			.oui:hover, .green-h { background: #349534 }
 
 		.non, .red {
 			color: red
 		}
 
-			.non:hover { background: #D12F19 }
+			.non:hover, .red-h { background: #D12F19 }
 
 		.neutral {
 			color: #656565;
@@ -169,9 +169,13 @@ section {
 
 			.neutral:hover { background: #656565; }
 	
-	button:hover {
+	button:hover, .green-h, .red-h {
 		color: #fff;
 		cursor: pointer;
+	}
+
+	.green-h, .red-h {
+		border-color: transparent;
 	}
 
 button {
